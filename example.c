@@ -1,8 +1,6 @@
 #include <assert.h>
 #include <elf.h>
 #include <fcntl.h>
-#include <stdarg.h>
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -35,7 +33,6 @@ pid_t run_target(char* const argv[])
         perror("fork");
         exit(1);
     }
-    return 0;
 }
 
 void* get_elf_content(const char* sym_name, const char* file_name)
@@ -81,9 +78,27 @@ void* get_elf_content(const char* sym_name, const char* file_name)
 unsigned long parse_elf(const char* target_sym, void* file_contents)
 {
     // TODO: Look up target_sym address in the elf binary and return its virtual
+    Elf64_Ehdr *ehdr = file_contents;
+    Elf64_Shdr *shdr = file_contents + ehdr->e_shoff;
+    int symtab_idx = -1;
+    for (int i = 0; i < ehdr->e_shnum; i++) {
+        if (shdr[i].sh_type == SHT_SYMTAB) {
+            symtab_idx = i;
+            break;
+        }
+    }
+    if (symtab_idx == -1) return 0;
+    Elf64_Sym *syms = file_contents + shdr[symtab_idx].sh_offset;
+    int strtab_idx = shdr[symtab_idx].sh_link;
+    char *strtab = file_contents + shdr[strtab_idx].sh_offset;
+    int num_symbols = shdr[symtab_idx].sh_size / sizeof(Elf64_Sym);
+    for (int i = 0; i < num_symbols; i++) {
+        char *current_sym_name = strtab + syms[i].st_name;
+        if (strcmp(current_sym_name, target_sym) == 0) {
+            return syms[i].st_value;
+        }
+    }
     // address. Return 0 if not found.
-
-    return 0;
 }
 
 /*
@@ -97,6 +112,11 @@ void run_tracer(pid_t child_pid, unsigned long addr, int nr_params)
     wait(&wait_status);
 
     // TODO: Implement tracing logic
+    unsigned long data = ptrace(PTRACE_PEEKTEXT, child_pid, (void*)addr, NULL);
+    unsigned char first_byte = data & 0xFF;
+    if (first_byte == 0x55) {
+        printf("PRF:: This function starts by pushing rbp\n");
+    }
 }
 
 int main(int argc, char* const argv[])
@@ -121,6 +141,11 @@ int main(int argc, char* const argv[])
     free(file_content);
 
     // TODO: check if symbol was found
+    if (addr == 0) {
+        printf("PRF:: symbol not found\n");
+        return 1;
+    }
+    printf("PRF:: symbol address is 0x%lx\n\n",addr);
 
     // Launch the target program
     pid_t child_pid = run_target(argv + 3);
