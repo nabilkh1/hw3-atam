@@ -8,9 +8,6 @@ if [ -f "prf" ]; then
 		echo "Test 1: PASS"
 	else
 		echo "Test 1: FAIL"
-        echo "--- Your output was: ---"
-        cat studentout.txt
-        echo "------------------------"
 	fi
 
 	timeout 20s ./prf rec_foo 1 program2.out > studentout.txt
@@ -18,6 +15,9 @@ if [ -f "prf" ]; then
 		echo "Test 2: PASS"
 	else
 		echo "Test 2: FAIL"
+		echo "--- Your output was: ---"
+        cat studentout.txt
+        echo "------------------------"
 	fi
 
 	timeout 20s ./prf rec_bar 1 program3.out > studentout.txt
