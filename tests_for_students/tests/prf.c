@@ -137,7 +137,6 @@ void run_tracer(pid_t child_pid, unsigned long addr, int nr_params)
         ptrace(PTRACE_SETREGS, child_pid, NULL, &regs);
         if (regs.rip == addr) {
             unsigned long return_addr = ptrace(PTRACE_PEEKTEXT, child_pid, (void*)regs.rsp, NULL);
-            printf("saved return addr = 0x%lx\n", return_addr);
             unsigned long long param_regs[6] = {regs.rdi, regs.rsi, regs.rdx, regs.rcx, regs.r8, regs.r9}; // first 6 params are passed in registers
         if (call_depth > 0) { // check if its a recursive call
             printf("PRF::     entered recursive call with (");
