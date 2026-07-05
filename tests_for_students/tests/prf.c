@@ -139,7 +139,6 @@ void run_tracer(pid_t child_pid, unsigned long addr, int nr_params)
             unsigned long return_addr = ptrace(PTRACE_PEEKTEXT, child_pid, (void*)regs.rsp, NULL);
             unsigned long long param_regs[6] = {regs.rdi, regs.rsi, regs.rdx, regs.rcx, regs.r8, regs.r9}; // first 6 params are passed in registers
         if (call_depth > 0) { // check if its a recursive call
-            call_depth++;
             printf("PRF::     entered recursive call with (");
             if (nr_params > 0) {
              for (int i=0; i<nr_params-1; i++) {
@@ -161,12 +160,12 @@ void run_tracer(pid_t child_pid, unsigned long addr, int nr_params)
                 printf("):\n");
             }
             run_idx++;
-            call_depth++;
             orig_return_addr = return_addr;
             ret_data = ptrace(PTRACE_PEEKTEXT, child_pid, (void*)orig_return_addr, NULL);
             ret_data_trap = (ret_data & 0xFFFFFFFFFFFFFF00) | 0xCC;
             ptrace(PTRACE_POKETEXT, child_pid, (void*)orig_return_addr, (void*)ret_data_trap);
         }
+        call_depth++;
         // Restore the original instruction and single step
         ptrace(PTRACE_POKETEXT, child_pid, (void*)addr, (void*)data);
         ptrace(PTRACE_SETREGS, child_pid, NULL, &regs);
@@ -178,6 +177,7 @@ void run_tracer(pid_t child_pid, unsigned long addr, int nr_params)
 
         } else if(orig_return_addr != 0 && regs.rip == orig_return_addr) {
             printf("PRF::   call to function returned with %llu\n", regs.rax);
+            orig_return_addr = 0;
             ptrace(PTRACE_POKETEXT, child_pid, (void*)orig_return_addr, (void*)ret_data);
             ptrace(PTRACE_CONT, child_pid, NULL, NULL);
             wait(&wait_status);
