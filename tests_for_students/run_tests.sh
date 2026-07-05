@@ -32,6 +32,9 @@ if [ -f "prf" ]; then
 		echo "Test 4: PASS"
 	else
 		echo "Test 4: FAIL"
+		echo "--- Your output was: ---"
+        cat studentout.txt
+        echo "------------------------"
 	fi
 
 	timeout 20s ./prf food 1 program5.out > studentout.txt
