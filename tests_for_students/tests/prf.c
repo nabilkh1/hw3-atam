@@ -154,9 +154,9 @@ void run_tracer(pid_t child_pid, unsigned long addr, int nr_params)
                 for (int i=0; i<nr_params-1; i++) {
                     printf("%llu, ",param_regs[i]);
                 }
-                printf("%llu)\n",param_regs[nr_params-1]);
+                printf("%llu):\n",param_regs[nr_params-1]);
             } else {
-                printf(")\n");
+                printf("):\n");
             }
             run_idx++;
             orig_return_addr = return_addr;
@@ -208,7 +208,7 @@ int main(int argc, char* const argv[])
         printf("PRF:: symbol not found\n");
         return 1;
     }
-    printf("PRF:: symbol address is 0x%lx\n\n",addr);
+    printf("PRF:: symbol address is 0x%lx\n",addr);
 
     // Launch the target program
     pid_t child_pid = run_target(argv + 3);
