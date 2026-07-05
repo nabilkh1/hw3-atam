@@ -132,8 +132,6 @@ void run_tracer(pid_t child_pid, unsigned long addr, int nr_params)
     unsigned long ret_data = 0;
     unsigned long ret_data_trap = 0;
     while(WIFSTOPPED(wait_status)) {
-        printf("rip=%llx rsp=%llx rax=%llu\n",
-       regs.rip, regs.rsp, regs.rax);
         ptrace(PTRACE_GETREGS, child_pid, NULL, &regs);
         regs.rip -= 1;
         ptrace(PTRACE_SETREGS, child_pid, NULL, &regs);
@@ -179,9 +177,6 @@ void run_tracer(pid_t child_pid, unsigned long addr, int nr_params)
         wait(&wait_status);
 
         } else if(orig_return_addr != 0 && regs.rip == orig_return_addr) {
-            printf("hit return addr = 0x%llx\n", regs.rip);
-            printf("rip=%llx rsp=%llx rax=%llu\n",
-       regs.rip, regs.rsp, regs.rax);
             printf("PRF::   call to function returned with %llu\n", regs.rax);
             ptrace(PTRACE_POKETEXT, child_pid, (void*)orig_return_addr, (void*)ret_data);
             ptrace(PTRACE_CONT, child_pid, NULL, NULL);
