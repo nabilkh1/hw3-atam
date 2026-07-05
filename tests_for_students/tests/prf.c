@@ -208,7 +208,7 @@ int main(int argc, char* const argv[])
         printf("PRF:: symbol not found\n");
         return 1;
     }
-    printf("PRF:: symbol address is 0x%lx\n",addr);
+    printf("PRF:: symbol address is 0x%lX\n",addr);
 
     // Launch the target program
     pid_t child_pid = run_target(argv + 3);
