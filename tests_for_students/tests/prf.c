@@ -176,15 +176,14 @@ void run_tracer(pid_t child_pid, unsigned long addr, int nr_params)
         wait(&wait_status);
 
         } else if(orig_return_addr != 0 && regs.rip == orig_return_addr) {
-            ptrace(PTRACE_GETREGS, child_pid, NULL, &regs);
-            printf("DEBUG:: Hit return breakpoint at 0x%lx. RAX is: %llu\n", regs.rip, regs.rax);
-            printf("PRF::   call to function returned with %llu\n", regs.rax);
-            ptrace(PTRACE_POKETEXT, child_pid, (void*)orig_return_addr, (void*)ret_data);
+            call_depth--;
+            if (call_depth ==0) {
+                printf("PRF::   call to function returned with %llu\n", regs.rax);
+                ptrace(PTRACE_POKETEXT, child_pid, (void*)orig_return_addr, (void*)ret_data);
+                orig_return_addr = 0;
+            }
             ptrace(PTRACE_CONT, child_pid, NULL, NULL);
             wait(&wait_status);
-            orig_return_addr = 0;
-            ret_data = 0;
-            call_depth = 0;
         }
     }
 }
