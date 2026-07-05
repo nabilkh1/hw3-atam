@@ -140,7 +140,7 @@ void run_tracer(pid_t child_pid, unsigned long addr, int nr_params)
             unsigned long long param_regs[6] = {regs.rdi, regs.rsi, regs.rdx, regs.rcx, regs.r8, regs.r9}; // first 6 params are passed in registers
         if (call_depth > 0) { // check if its a recursive call
             call_depth++;
-            printf("PRF::    entered recursive call with (");
+            printf("PRF::     entered recursive call with (");
             if (nr_params > 0) {
              for (int i=0; i<nr_params-1; i++) {
                 printf("%llu, ",param_regs[i]);
@@ -181,7 +181,7 @@ void run_tracer(pid_t child_pid, unsigned long addr, int nr_params)
             ptrace(PTRACE_POKETEXT, child_pid, (void*)orig_return_addr, (void*)ret_data);
             ptrace(PTRACE_CONT, child_pid, NULL, NULL);
             wait(&wait_status);
-            call_depth--;
+            call_depth = 0;
         }
     }
 }
