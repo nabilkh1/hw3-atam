@@ -5,7 +5,6 @@ gcc -std=c99 *.c -o prf
 if [ -f "prf" ]; then
 	timeout 20s ./prf foo 2 program1.out > studentout.txt
 	if [ $? -eq 0 ] && diff "out1.txt" studentout.txt >/dev/null 2>&1; then
-		else
         echo "Test 1: FAIL"
         echo "--- Your output was: ---"
         cat studentout.txt
