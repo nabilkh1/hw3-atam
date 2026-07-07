@@ -13,7 +13,6 @@
 #include <syscall.h>
 #include <unistd.h>
 
-unsigned long func_size;
 
 /*
  * Fork a child process and set it up for tracing.
@@ -97,10 +96,10 @@ unsigned long parse_elf(const char* target_sym, void* file_contents)
     for (int i = 0; i < num_symbols; i++) {
         char *current_sym_name = strtab + syms[i].st_name;
         if (strcmp(current_sym_name, target_sym) == 0) {
-            func_size = syms[i].st_size;
             return syms[i].st_value;
         }
     }
+    return 0;
     // address. Return 0 if not found.
 }
 
