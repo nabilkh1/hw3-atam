@@ -28,6 +28,9 @@ if [ -f "prf" ]; then
 		echo "Test 3: PASS"
 	else
 		echo "Test 3: FAIL"
+		echo "--- Your output was: ---"
+		cat studentout.txt
+		echo "------------------------"
 	fi
 
 	timeout 20s ./prf food 1 program4.out > studentout.txt
@@ -45,6 +48,9 @@ if [ -f "prf" ]; then
 		echo "Test 5: PASS"
 	else
 		echo "Test 5: FAIL"
+		echo "--- Your output was: ---"
+        cat studentout.txt
+        echo "------------------------"
 	fi
 
 	timeout 20s ./prf food 1 program6.out > studentout.txt
@@ -52,6 +58,9 @@ if [ -f "prf" ]; then
 		echo "Test 6: PASS"
 	else
 		echo "Test 6: FAIL"
+		echo "--- Your output was: ---"
+		cat studentout.txt
+		echo "------------------------"
 	fi
 
 	timeout 20s ./prf foo 2 program7.out > studentout.txt
@@ -69,6 +78,9 @@ if [ -f "prf" ]; then
 		echo "Test 8: PASS"
 	else
 		echo "Test 8: FAIL"
+		echo "--- Your output was: ---"
+        cat studentout.txt
+        echo "------------------------"
 	fi
 
 	timeout 20s ./prf foo 2 program9.out > studentout.txt
@@ -76,6 +88,9 @@ if [ -f "prf" ]; then
 		echo "Test 9: PASS"
 	else
 		echo "Test 9: FAIL"
+		echo "--- Your output was: ---"
+        cat studentout.txt
+        echo "------------------------"
 	fi
 
 	timeout 20s ./prf foo 1 program10.out > studentout.txt
@@ -83,6 +98,9 @@ if [ -f "prf" ]; then
 		echo "Test 10: PASS"
 	else
 		echo "Test 10: FAIL"
+		echo "--- Your output was: ---"
+        cat studentout.txt
+        echo "------------------------"
 	fi
 
 	timeout 20s ./prf foo 2 program11.out R > studentout.txt
@@ -90,6 +108,9 @@ if [ -f "prf" ]; then
 		echo "Test 11: PASS"
 	else
 		echo "Test 11: FAIL"
+		echo "--- Your output was: ---"
+        cat studentout.txt
+        echo "------------------------"
 	fi
 
 	timeout 20s ./prf nonexistent 1 program1.out > studentout.txt
@@ -97,6 +118,9 @@ if [ -f "prf" ]; then
 		echo "Test 12: PASS"
 	else
 		echo "Test 12: FAIL"
+		echo "--- Your output was: ---"
+        cat studentout.txt
+        echo "------------------------"
 	fi
 
 	timeout 20s ./prf zero_params_func 0 program13.out > studentout.txt
@@ -104,6 +128,9 @@ if [ -f "prf" ]; then
 		echo "Test 13: PASS"
 	else
 		echo "Test 13: FAIL"
+		echo "--- Your output was: ---"
+        cat studentout.txt
+        echo "------------------------"
 	fi
 
 	timeout 20s ./prf six_params_func 6 program14.out > studentout.txt
@@ -111,6 +138,9 @@ if [ -f "prf" ]; then
 		echo "Test 14: PASS"
 	else
 		echo "Test 14: FAIL"
+		echo "--- Your output was: ---"
+        cat studentout.txt
+        echo "------------------------"
 	fi
 
 	timeout 20s ./prf fib 1 program15.out > studentout.txt
@@ -118,6 +148,9 @@ if [ -f "prf" ]; then
 		echo "Test 15: PASS"
 	else
 		echo "Test 15: FAIL"
+		echo "--- Your output was: ---"
+        cat studentout.txt
+        echo "------------------------"
 	fi
 
 	timeout 20s ./prf deep_rec_func 1 program16.out > studentout.txt
@@ -125,6 +158,9 @@ if [ -f "prf" ]; then
 		echo "Test 16: PASS"
 	else
 		echo "Test 16: FAIL"
+		echo "--- Your output was: ---"
+        cat studentout.txt
+        echo "------------------------"
 	fi
 
 	timeout 20s ./prf fib 1 program17.out > studentout.txt
@@ -132,6 +168,9 @@ if [ -f "prf" ]; then
 		echo "Test 17: PASS"
 	else
 		echo "Test 17: FAIL"
+		echo "--- Your output was: ---"
+        cat studentout.txt
+        echo "------------------------"
 	fi
 else
 	echo "Compilation error - cannot create debugger file"
