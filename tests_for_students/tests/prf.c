@@ -131,6 +131,7 @@ void run_tracer(pid_t child_pid, unsigned long addr, int nr_params)
     unsigned long orig_return_addr = 0;
     unsigned long ret_data = 0;
     unsigned long ret_data_trap = 0;
+    unsigned long orig_rsp = 0;
     while(WIFSTOPPED(wait_status)) {
         ptrace(PTRACE_GETREGS, child_pid, NULL, &regs);
         regs.rip -= 1;
@@ -161,6 +162,7 @@ void run_tracer(pid_t child_pid, unsigned long addr, int nr_params)
             }
             run_idx++;
             orig_return_addr = return_addr;
+            orig_rsp = regs.rsp;
             ret_data = ptrace(PTRACE_PEEKTEXT, child_pid, (void*)orig_return_addr, NULL);
             ret_data_trap = (ret_data & 0xFFFFFFFFFFFFFF00) | 0xCC;
             ptrace(PTRACE_POKETEXT, child_pid, (void*)orig_return_addr, (void*)ret_data_trap);
@@ -176,13 +178,23 @@ void run_tracer(pid_t child_pid, unsigned long addr, int nr_params)
         wait(&wait_status);
 
         } else if(orig_return_addr != 0 && regs.rip == orig_return_addr) {
-            printf("PRF::   call to function returned with %llu\n", regs.rax);
-            ptrace(PTRACE_POKETEXT, child_pid, (void*)orig_return_addr, (void*)ret_data);
+            if (regs.rsp > orig_rsp) {
+                printf("PRF::   call to function returned with %llu\n", regs.rax);
+                ptrace(PTRACE_POKETEXT, child_pid, (void*)orig_return_addr, (void*)ret_data);
             ptrace(PTRACE_CONT, child_pid, NULL, NULL);
             wait(&wait_status);
             orig_return_addr = 0;
             ret_data = 0;
+            orig_rsp = 0;
             call_depth = 0;
+            } else {
+                ptrace(PTRACE_POKETEXT, child_pid, (void*)orig_return_addr, (void*)ret_data);
+                ptrace(PTRACE_SINGLESTEP, child_pid, NULL, NULL);
+                wait(&wait_status);
+                ptrace(PTRACE_POKETEXT, child_pid, (void*)orig_return_addr, (void*)ret_data_trap);
+                ptrace(PTRACE_CONT, child_pid, NULL, NULL);
+                wait(&wait_status);
+            }
         }
     }
 }
