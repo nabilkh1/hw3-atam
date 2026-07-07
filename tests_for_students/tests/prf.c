@@ -143,9 +143,9 @@ void run_tracer(pid_t child_pid, unsigned long addr, int nr_params)
             printf("PRF::     entered recursive call with (");
             if (nr_params > 0) {
              for (int i=0; i<nr_params-1; i++) {
-                printf("%llu, ",param_regs[i]);
+                printf("%lld, ",(long long)param_regs[i]);
             }
-            printf("%llu)\n",param_regs[nr_params-1]);
+            printf("%lld)\n",(long long)param_regs[nr_params-1]);
             } else {
                 printf(")\n");
             }
@@ -154,9 +154,9 @@ void run_tracer(pid_t child_pid, unsigned long addr, int nr_params)
             printf("PRF:: run #%d called with (", run_idx);
             if (nr_params > 0) {
                 for (int i=0; i<nr_params-1; i++) {
-                    printf("%llu, ",param_regs[i]);
+                    printf("%lld, ",(long long)param_regs[i]);
                 }
-                printf("%llu):\n",param_regs[nr_params-1]);
+                printf("%lld):\n",(long long)param_regs[nr_params-1]);
             } else {
                 printf("):\n");
             }
