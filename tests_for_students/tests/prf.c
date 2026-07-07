@@ -138,14 +138,14 @@ void run_tracer(pid_t child_pid, unsigned long addr, int nr_params)
         ptrace(PTRACE_SETREGS, child_pid, NULL, &regs);
         if (regs.rip == addr) {
             unsigned long return_addr = ptrace(PTRACE_PEEKTEXT, child_pid, (void*)regs.rsp, NULL);
-            int64_t param_regs[6] = {regs.rdi, regs.rsi, regs.rdx, regs.rcx, regs.r8, regs.r9}; // first 6 params are passed in registers
+            unsigned long long param_regs[6] = {regs.rdi, regs.rsi, regs.rdx, regs.rcx, regs.r8, regs.r9}; // first 6 params are passed in registers
         if (call_depth > 0) { // check if its a recursive call
             printf("PRF::     entered recursive call with (");
             if (nr_params > 0) {
              for (int i=0; i<nr_params-1; i++) {
-                printf("%lld, ",(long long)(int64_t)param_regs[i]);
+                printf("%d, ",(int32_t)param_regs[i]);
             }
-            printf("%lld)\n",(long long)(int64_t)param_regs[nr_params-1]);
+            printf("%d)\n",(int32_t)param_regs[nr_params-1]);
             } else {
                 printf(")\n");
             }
@@ -154,9 +154,9 @@ void run_tracer(pid_t child_pid, unsigned long addr, int nr_params)
             printf("PRF:: run #%d called with (", run_idx);
             if (nr_params > 0) {
                 for (int i=0; i<nr_params-1; i++) {
-                    printf("%lld, ",(long long)(int64_t)param_regs[i]);
+                    printf("%d, ",(int32_t)param_regs[i]);
                 }
-                printf("%lld):\n",(long long)(int64_t)param_regs[nr_params-1]);
+                printf("%d):\n",(int32_t)param_regs[nr_params-1]);
             } else {
                 printf("):\n");
             }
@@ -179,7 +179,7 @@ void run_tracer(pid_t child_pid, unsigned long addr, int nr_params)
 
         } else if(orig_return_addr != 0 && regs.rip == orig_return_addr) {
             if (regs.rsp > orig_rsp) {
-                printf("PRF::   call to function returned with %lld\n", (long long)(int64_t)regs.rax);
+                printf("PRF::   call to function returned with %d\n", (int32_t)regs.rax);
                 ptrace(PTRACE_POKETEXT, child_pid, (void*)orig_return_addr, (void*)ret_data);
             ptrace(PTRACE_CONT, child_pid, NULL, NULL);
             wait(&wait_status);
