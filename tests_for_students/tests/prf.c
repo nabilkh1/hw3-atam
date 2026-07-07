@@ -179,7 +179,7 @@ void run_tracer(pid_t child_pid, unsigned long addr, int nr_params)
 
         } else if(orig_return_addr != 0 && regs.rip == orig_return_addr) {
             if (regs.rsp > orig_rsp) {
-                printf("PRF::   call to function returned with %llu\n", regs.rax);
+                printf("PRF::   call to function returned with %lld\n", (long long)regs.rax);
                 ptrace(PTRACE_POKETEXT, child_pid, (void*)orig_return_addr, (void*)ret_data);
             ptrace(PTRACE_CONT, child_pid, NULL, NULL);
             wait(&wait_status);

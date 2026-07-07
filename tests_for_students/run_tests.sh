@@ -59,6 +59,9 @@ if [ -f "prf" ]; then
 		echo "Test 7: PASS"
 	else
 		echo "Test 7: FAIL"
+		echo "--- Your output was: ---"
+        cat studentout.txt
+        echo "------------------------"
 	fi
 
 	timeout 20s ./prf foo 2 program8.out > studentout.txt
